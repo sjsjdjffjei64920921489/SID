@@ -6,12 +6,25 @@ use Illuminate\Http\Request;
 $basePath = trim(getenv('PAGES_BASE_PATH') ?: '', '/');
 $applicationUrl = rtrim(getenv('APP_URL') ?: 'http://localhost', '/');
 $outputDirectory = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'docs';
+$runtimeDirectories = [
+    dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'data',
+    dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'sessions',
+    dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'views',
+    dirname(__DIR__) . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'logs',
+];
+
+foreach ($runtimeDirectories as $runtimeDirectory) {
+    if (! is_dir($runtimeDirectory) && ! mkdir($runtimeDirectory, 0775, true) && ! is_dir($runtimeDirectory)) {
+        throw new RuntimeException("Unable to create Laravel runtime directory {$runtimeDirectory}.");
+    }
+}
+
 require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 $application = require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'app.php';
 $kernel = $application->make(Kernel::class);
 
 foreach (['/', '/register', '/login'] as $path) {
-    $request = Request::create($path, 'GET');
+    $request = Request::create($applicationUrl . $path, 'GET');
     $response = $kernel->handle($request);
 
     if ($response->getStatusCode() !== 200) {
