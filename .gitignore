@@ -3,6 +3,7 @@
 /public/build
 /public/hot
 /public/storage
+/docs/
 /database/*.sqlite
 /storage/framework
 /storage/logs

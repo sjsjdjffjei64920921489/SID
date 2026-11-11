@@ -32,3 +32,14 @@ php artisan migrate
 ```
 
 The catalog remains public; signing in is not required to browse jerseys. Online checkout is not enabled.
+
+## Public frontend preview
+
+The GitHub Pages workflow publishes a free static preview at `https://sjsjdjffjei64920921489.github.io/SID/`. It includes the collection, images, and account-screen designs. Registration and login are preview-only there; use the full Laravel app for working accounts.
+
+The workflow builds the preview from the Laravel Blade views with:
+
+```powershell
+npm run build
+php scripts/export-static-preview.php
+```
